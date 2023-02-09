@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
@@ -7,6 +7,7 @@ import Card from 'react-bootstrap/Card';
 
 export default function Doctor() {
     const [doctors, setDoctors] = useState([]);
+    const navigate = useNavigate();
     useEffect(() => async () => {
         let response;
         try {
@@ -19,6 +20,7 @@ export default function Doctor() {
     }, [])
 
     function handleSelectDoctor() {
+        console.log('test')
         // TODO: send doctor id to state
     }
     const rendezVous = {
@@ -40,7 +42,7 @@ export default function Doctor() {
                             <p>{doctor.email} </p>
                             <p>{doctor.phone}</p>
                         </Card.Text>
-                        <Button variant="primary" onClick={handleSelectDoctor}>Go somewhere</Button>
+                        <Button variant="primary" onClick={() => navigate('/rdv')}>Prendre un Rdv</Button>
                     </Card.Body>
                 </Card>
             ))}

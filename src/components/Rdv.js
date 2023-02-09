@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
+import { useDispatch } from 'react-redux'
+import { add } from '../Redux/rdvSlice'
+import { useNavigate } from 'react-router-dom';
+
 
 
 export default function Rdv() {
+    const navigate = useNavigate();
     const [appointment, setAppointment] = useState({})
-    const [appointmentType, setAppointmentType] = useState('doctor')
+    const dispatch = useDispatch()
+    const [appointmentType, setAppointmentType] = useState('')
 
     const [selectDoctors, setSelectDoctors] = useState([]);
     const labs = [{ id: "0", name: "Medis", address: { city: "Nabeul" } },
@@ -20,7 +23,6 @@ export default function Rdv() {
         try {
             const response = await fetch('https://dummyjson.com/users');
             const { users } = await response.json();
-            console.log(users)
             setSelectDoctors(users)
         } catch (err) {
             console.error(err.message);
@@ -43,7 +45,9 @@ export default function Rdv() {
 
     function handleSubmit() {
         // construct data
-        console.log(appointment)
+        dispatch(add(appointment))
+        setAppointment('')
+        setAppointmentType('')
         // send data to global state
     }
 
@@ -51,56 +55,56 @@ export default function Rdv() {
 
     return (
         <div className="vh-100" style={{ backgroundColor: '#eee' }}>
-            <Container className='pt-4'>
+            <Container className='pt-4 align-items-center'>
                 <Form>
-                    <div key={`inline-radio`} className="mb-3">
+                    <div key={`inline-radio`} className="">
                         <Form.Check
                             inline
                             onChange={() => handleSelectType('doctor')}
-                            checked={appointmentType == 'doctor'}
                             label="select by doctor"
                             name="group1"
                             type="radio"
                             id="inline-radio-1"
+                            required
                         />
                         <Form.Check
                             inline
                             onChange={() => handleSelectType('lab')}
-                            checked={appointmentType == 'lab'}
                             label="select by lab"
                             name="group1"
                             type="radio"
                             id="inline-radio-2"
+                            required
                         />
                     </div>
                 </Form>
+                {appointmentType !== '' ?
+                    <>
+                        <Form.Select onChange={handleSelect} aria-label="Default select example" >
+                            <option>Open this select menu</option>
+                            {appointmentType === "doctor"
+                                ? (selectDoctors.map((doctor) => (
+                                    <option value={doctor.firstName}>{doctor.firstName} {doctor.lastName} - in {doctor.address.city}</option>
+                                )
+                                )) : appointmentType === "lab" ? (labs.map((lab) => (
+                                    <option value={lab.name}>{lab.name} - in {lab.address.city}</option>
+                                )
+                                )) : <option>Open this select menu</option>}
+                            { }
+                        </Form.Select>
 
-                SELECTING BY {appointmentType}
-                <Form.Select onChange={handleSelect} aria-label="Default select example">
-                    <option>Open this select menu</option>
-                    {appointmentType === "doctor"
-                        ? (selectDoctors.map((doctor) => (
-                            <option value={doctor.id}>{doctor.firstName} {doctor.lastName} - in {doctor.address.city}</option>
-                        )
-                        )) : (labs.map((lab) => (
-                            <option value={lab.id}>{lab.name} - in {lab.address.city}</option>
-                        )
-                        ))}
-                    { }
-                </Form.Select>
-
-                <div>{range(9, 16).map((time) => (
-                    <button
-                        style={appointment.time === time ? { backgroundColor: "blue", color: "white" } : {}}
-                        key={time}
-                        onClick={() => setAppointment({ ...appointment, time: time })}
-                    >
-                        {time} - {time + 1}
-                    </button>
-                ))}</div>
+                        <div>{range(9, 16).map((time) => (
+                            <button
+                                style={appointment.time === time ? { backgroundColor: "blue", color: "white" } : {}}
+                                key={time}
+                                onClick={() => setAppointment({ ...appointment, time: time })}
+                            >
+                                {time} - {time + 1}
+                            </button>
+                        ))}</div>
 
 
-                <Button onClick={handleSubmit}>Schedule</Button>
+                        <Button onClick={handleSubmit}>Schedule</Button></> : null}
             </Container>
         </div>
     );

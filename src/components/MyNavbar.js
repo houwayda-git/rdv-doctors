@@ -1,11 +1,16 @@
+import React, { useState, useEffect } from 'react'
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import Badge from 'react-bootstrap/Badge';
 
 function MyNavbar() {
+    const [count, setCount] = useState(0)
+    useEffect(() => {
+        setCount(JSON.parse(localStorage.getItem('count')))
+    }, [])
     let login = false;
     return (
         <Navbar>
@@ -22,28 +27,16 @@ function MyNavbar() {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        {(login == true) ? <Nav.Link href="/profile">Espace privée</Nav.Link>
-                            : <Nav.Link href="/">Connexion</Nav.Link>}
+                        <Nav.Link href="/profile">Espace privée <Badge bg="danger">{JSON.parse(localStorage.getItem('count'))}</Badge></Nav.Link>
                         {(login == true) ? <Nav.Link href="/rdv" disabled>Prise de rendez vous</Nav.Link>
                             : <Nav.Link href="/rdv">Prise de rendez vous</Nav.Link>}
-                        <NavDropdown title="Annuaire" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="/labo">Laboratoires</NavDropdown.Item>
-                            <NavDropdown.Item href="/doctor">
-                                Medecins
-                            </NavDropdown.Item>
-                            <NavDropdown.Item href="/Pharma">Pharmacies</NavDropdown.Item>
-                        </NavDropdown>
+                        <Nav.Link href="/labo">Laboratoires</Nav.Link>
+                        <Nav.Link href="/doctor">
+                            Medecins
+                        </Nav.Link>
+                        <Nav.Link href="/Pharma">Pharmacies</Nav.Link>
 
                     </Nav>
-                    <Form className="d-flex">
-                        <Form.Control
-                            type="search"
-                            placeholder="Search"
-                            className="me-2"
-                            aria-label="Search"
-                        />
-                        <Button variant="outline-success">Search</Button>
-                    </Form>
                 </Navbar.Collapse>
             </Container>
         </Navbar>
